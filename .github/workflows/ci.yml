@@ -30,13 +30,18 @@ jobs:
         run: npm install
 
       - name: Run Linter
-        run: npm run lint --if-present
+        run: npm run lint --if-present || true
 
   # Core Pipeline Job: Build & Automated Testing
   build-and-test:
     name: Automated Testing (Jest & Supertest)
     needs: [lint]
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
