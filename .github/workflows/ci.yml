@@ -1,0 +1,61 @@
+name: CI Pipeline
+
+# =========================================================================
+# Practical 12: CI/CD Pipeline with GitHub Actions
+# Triggers: Push and Pull Request targeting main branch
+# =========================================================================
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Supplementary Problem 1: Linter Job before test execution
+  lint:
+    name: Lint Check (Code Quality)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Linter
+        run: npm run lint --if-present
+
+  # Core Pipeline Job: Build & Automated Testing
+  build-and-test:
+    name: Automated Testing (Jest & Supertest)
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Jest Test Suite
+        run: npm test
+        env:
+          NODE_ENV: test
+          PORT: 5000
+          MONGO_URI: mongodb://127.0.0.1:27017/tasksDB_prac12_test
+          JWT_SECRET: supersecretjwtkey_prac12_cicd_2026
+          ENABLE_CACHE: true
+          NOTIFICATION_DELAY_MS: 50

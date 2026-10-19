@@ -1,0 +1,19 @@
+const request = require('supertest');
+const app = require('../server');
+
+/**
+ * Step 5 Demonstration: Deliberately broken test to showcase CI pipeline failure (Red X)
+ * 
+ * To test a pipeline failure locally or on GitHub:
+ * 1. Rename this file to `broken.test.js` or run: npm run test:broken
+ * 2. Observe the red failure output: Expected 999 but received 200.
+ * 3. Correct the expected status back to 200 and observe the pipeline turn green!
+ */
+describe('DELIBERATE FAILURE DEMO: Broken Test Scenario', () => {
+  test('DELIBERATELY BROKEN: Expects non-existent status 999 instead of 200', async () => {
+    const res = await request(app).get('/');
+    
+    // Intentionally wrong assertion to trigger CI pipeline failure (Red X):
+    expect(res.statusCode).toBe(999);
+  });
+});
